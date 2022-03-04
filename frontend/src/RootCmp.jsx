@@ -3,7 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 
 
 // Cmps
-import { HomePage } from './pages/HomePage'
+import { Welcome } from './pages/Welcome'
+import { Drawing } from './pages/Drawing'
 import { AppHeader } from './cmps/AppHeader';
 import { UserMsg } from './cmps/UserMsg';
 
@@ -14,7 +15,8 @@ export function RootCmp() {
       <AppHeader />
       <main>
         <Routes>
-          <Route path='/' element={<HomePage />} />
+          <Route path='/' element={<Welcome />} />
+          <Route path='/drawing' element={<Drawing />} />
 
         </Routes>
       </main>
