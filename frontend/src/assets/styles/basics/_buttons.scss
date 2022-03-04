@@ -1,0 +1,47 @@
+
+.primary-btn {
+    
+
+    &:hover {
+        background-color: #091e4214;
+    }
+}
+
+// close-icon-btn
+.close-btn {
+    padding: 4px 8px;
+    background-color: inherit;
+    border: none;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 18px;
+
+    
+}
+
+.secondary-btn {
+    background-color: #0079bf;
+    border: none;
+    color: #fff;
+    margin-right: 4px;
+    padding: 6px 12px;
+    border-radius: 3px;
+    font-size: rem(14px);
+
+    &:hover { 
+        background-color: #026aa7;
+        box-shadow: none;
+    }
+}
+
+.delete-btn {
+    background-color: #b04632;
+    border: none;
+    color: #fff;
+    margin-right: 4px;
+    padding: 6px 12px;
+    border-radius: 3px;
+    font-size: rem(14px);
+}
+
