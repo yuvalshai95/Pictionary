@@ -24,35 +24,7 @@ function connectSockets(http) {
     });
 
     socket.on('join', userName => onPlayerJoin(socket, userName));
-
-    // socket.on('chat topic', topic => {
-    //   if (socket.myTopic === topic) return;
-    //   if (socket.myTopic) {
-    //     socket.leave(socket.myTopic);
-    //   }
-    //   socket.join(topic);
-    //   socket.myTopic = topic;
-    // });
-
-    // socket.on('chat newMsg', msg => {
-    //   console.log('Emitting Chat msg', msg);
-    //   // emits to all sockets:
-    //   // gIo.emit('chat addMsg', msg)
-    //   // emits only to sockets in the same room
-    //   gIo.to(socket.myTopic).emit('chat addMsg', msg);
-    // });
-
-    // socket.on('user-watch', userId => {
-    //   socket.join('watching:' + userId);
-    // });
-
-    // socket.on('set-user-socket', userId => {
-    //   socket.userId = userId;
-    // });
-
-    // socket.on('unset-user-socket', () => {
-    //   delete socket.userId;
-    // });
+    socket.on('draw', coords => onDraw(socket, coords));
   });
 }
 
@@ -72,6 +44,11 @@ const onPlayerJoin = (socket, userName) => {
   // });
 
   // if(canStartGame()) startGame()
+};
+
+const onDraw = (socket, coords) => {
+  socket.broadcast.emit('draw', coords);
+  drawingCache.push(coords);
 };
 
 // GAME MANAGEMENT FUNCTIONS //
