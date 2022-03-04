@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GiHamburgerMenu } from 'react-icons/gi';
 
-import { NavLink } from 'react-router-dom';
-
-// Services
-
-// Actions
-
+import { NavLink, Link } from 'react-router-dom';
 
 export function AppHeader() {
     const [isMenuOpen, setMenuState] = useState(false)
@@ -22,13 +17,11 @@ export function AppHeader() {
             }}></div>
             <section className='header-content'>
 
-                <NavLink className="logo" to="/">Logo</NavLink>
+                <Link className="logo" to="/">Logo</Link>
                 <nav className='nav-container'>
                     <ul className={`nav-links clean-list ${(isMenuOpen) ? 'open' : ''}`}>
                         <NavLink to="/"> <li>Home</li></NavLink>
                         <NavLink to="/other"> <li>Other</li></NavLink>
-                        <NavLink to="/about"> <li>About</li></NavLink>
-                        <NavLink to="/contact"> <li>Contact</li></NavLink>
                     </ul>
                 </nav>
                 <button className="hamburger-btn" onClick={() => {

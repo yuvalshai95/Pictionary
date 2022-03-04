@@ -1,10 +1,9 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-// Routes
-import routes from './routes.js';
 
 // Cmps
+import { HomePage } from './pages/HomePage'
 import { AppHeader } from './cmps/AppHeader';
 import { UserMsg } from './cmps/UserMsg';
 
@@ -15,14 +14,12 @@ export function RootCmp() {
       <AppHeader />
       <main>
         <Routes>
-          {routes.map(route => (
-            <Route key={route.path} element={route.component} path={route.path} />
-          ))}
+          <Route path='/' element={<HomePage />} />
+
         </Routes>
       </main>
       <UserMsg />
-    </div >
+    </div>
   );
 }
-
 export default RootCmp;
