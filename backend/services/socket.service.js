@@ -1,7 +1,11 @@
 var gIo = null;
 
 function connectSockets(http) {
-  gIo = require('socket.io')(http);
+  gIo = require('socket.io')(http, {
+    cors: {
+      origin: '*',
+    },
+  });
   gIo.on('connection', socket => {
     console.log('New socket', socket.id);
     socket.on('disconnect', socket => {
