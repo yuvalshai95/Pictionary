@@ -12,6 +12,12 @@ export const CanvasCmp = () => {
     }, [])
 
     useEffect(() => {
+        // Canvas drawing history for players joining after game started
+        socketService.on('join', (drawingCache) => {
+            console.log('drawingCache', drawingCache)
+            drawingCache.forEach(line => drawLine(line.xStart, line.yStart, line.xFinish, line.yFinish, false));
+        })
+
         // Multiplayer draw in real time socket
         socketService.off('draw')
         socketService.on('draw', ({ xStart, yStart, xFinish, yFinish }) => {
@@ -84,7 +90,6 @@ export const CanvasCmp = () => {
 
 
     const clear = () => {
-        console.log('clear');
         socketService.emit('clear')
     }
 

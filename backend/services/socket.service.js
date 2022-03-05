@@ -39,6 +39,9 @@ const onPlayerJoin = (socket, userName) => {
     score: 0,
   });
 
+  // Send to client the cached drawing
+  socket.emit('join', drawingCache);
+
   // Update client player list when a player join
   gIo.emit('player', players);
 
@@ -49,6 +52,11 @@ const onPlayerJoin = (socket, userName) => {
     });
 
     gIo.emit('player', players);
+
+    // Clear cache when room is empty
+    if (players.length === 0) {
+      drawingCache = [];
+    }
   });
 };
 
