@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { socketService } from '../services/socket.service'
 
-export const CanvasCmp = () => {
+export const CanvasCmp = ({ isDrawer }) => {
     const canvasRef = useRef()
     const [isDrawing, setIsDrawing] = useState(false)
     const [coords, setCoords] = useState({ x: 0, y: 0 })
@@ -13,8 +13,8 @@ export const CanvasCmp = () => {
 
     useEffect(() => {
         // Canvas drawing history for players joining after game started
+        socketService.off('join')
         socketService.on('join', (drawingCache) => {
-            console.log('drawingCache', drawingCache)
             drawingCache.forEach(line => drawLine(line.xStart, line.yStart, line.xFinish, line.yFinish, false));
         })
 
@@ -63,14 +63,17 @@ export const CanvasCmp = () => {
     // MouseUp / MouseOut
     const stopDrawing = (e) => {
         const newCoords = getRecentCoords(e)
-        drawLine(newCoords.x, newCoords.y, newCoords.x, newCoords.y, true)
-        canvasRef.current.getContext('2d').closePath()
+        // Draw a single dot
+        if (isDrawing && isDrawer) {
+            drawLine(newCoords.x, newCoords.y, newCoords.x, newCoords.y, true)
+            canvasRef.current.getContext('2d').closePath()
+        }
         setIsDrawing(false)
     }
 
     // MouseMove
     const draw = (e) => {
-        if (!isDrawing) return
+        if (!isDrawing || !isDrawer) return
 
         const newCoords = getRecentCoords(e)
         drawLine(coords.x, coords.y, newCoords.x, newCoords.y, true)
@@ -90,14 +93,14 @@ export const CanvasCmp = () => {
 
 
     const clear = () => {
-        socketService.emit('clear')
+        isDrawer && socketService.emit('clear')
     }
 
     return (
         <>
             <canvas
                 ref={canvasRef}
-                className='rounded'
+                className={`rounded ${isDrawer ? 'canvas-enabled' : 'canvas-disabled'}`}
                 width={600}
                 height={450}
                 onMouseDown={startDrawing}

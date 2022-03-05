@@ -5,7 +5,7 @@ var gIo = null;
 let players = [];
 let playersGuessed = [];
 let drawingCache = [];
-let hasGameStarted = false;
+let isGameStarted = false;
 let currDrawerIndex = 0;
 let round = 0;
 let word = '';
@@ -39,6 +39,12 @@ const onPlayerJoin = (socket, userName) => {
     score: 0,
   });
 
+  // Game starting condition
+  if (!isGameStarted && players.length > 1) {
+    gIo.emit('startGame');
+    isGameStarted = true;
+  }
+
   // Send to client the cached drawing
   socket.emit('join', drawingCache);
 
@@ -50,6 +56,12 @@ const onPlayerJoin = (socket, userName) => {
     players = players.filter(player => {
       return player.id !== socket.id;
     });
+
+    // Game ending condition
+    if (players.length < 2) {
+      gIo.emit('endGame');
+      isGameStarted = false;
+    }
 
     gIo.emit('player', players);
 
@@ -71,9 +83,9 @@ const onClearCanvas = () => {
 };
 
 const onReceiveChat = (socket, msg) => {
-  const from = players.find(player => player.id === socket.id).userName;
+  const player = players.find(player => player.id === socket.id);
   socket.broadcast.emit('chat', {
-    from,
+    from: player.firstName,
     msg,
   });
 
