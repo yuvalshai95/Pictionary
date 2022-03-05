@@ -41,7 +41,8 @@ const onPlayerJoin = (socket, userName) => {
 
   // Game starting condition
   if (!isGameStarted && players.length > 1) {
-    gIo.emit('startGame');
+    // gIo.emit('startGame');
+    gIo.emit('nextTurn', players[currDrawerIndex].id);
     isGameStarted = true;
   }
 
@@ -70,6 +71,15 @@ const onPlayerJoin = (socket, userName) => {
       drawingCache = [];
     }
   });
+
+  // Drawer timer run out or game word guess is right
+  socket.on('nextTurn', () => {
+    currDrawerIndex++;
+
+    if (currDrawerIndex > players.length - 1) currDrawerIndex = 0;
+
+    gIo.emit('nextTurn', players[currDrawerIndex].id);
+  });
 };
 
 const onDraw = (socket, coords) => {
@@ -85,7 +95,7 @@ const onClearCanvas = () => {
 const onReceiveChat = (socket, msg) => {
   const player = players.find(player => player.id === socket.id);
   socket.broadcast.emit('chat', {
-    from: player.firstName,
+    from: player.userName,
     msg,
   });
 

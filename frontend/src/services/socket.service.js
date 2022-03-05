@@ -25,6 +25,10 @@ function createSocketService() {
     terminate() {
       socket = null;
     },
+    getSocketId() {
+      var socketId = socket.id;
+      return socketId;
+    },
   };
   return socketService;
 }
