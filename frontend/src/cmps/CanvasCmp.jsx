@@ -8,24 +8,35 @@ export const CanvasCmp = () => {
 
     // Canvas init
     useEffect(() => {
-        const canvas = canvasRef.current
-        const ctx = canvas.getContext('2d')
-
-        ctx.fillStyle = '#fff'
-        ctx.strokeStyle = '#000'
-        ctx.lineCap = 'round'
-        ctx.lineWidth = 5
+        initCanvas()
     }, [])
 
-
-    // Multiplayer draw in real time socket
     useEffect(() => {
+        // Multiplayer draw in real time socket
         socketService.off('draw')
         socketService.on('draw', ({ xStart, yStart, xFinish, yFinish }) => {
             drawLine(xStart, yStart, xFinish, yFinish, false)
         })
 
+        // Clear canvas socket
+        socketService.off('clear')
+        socketService.on('clear', () => {
+            initCanvas()
+        })
+
     }, [])
+
+
+    const initCanvas = () => {
+        const canvas = canvasRef.current
+        const ctx = canvas.getContext('2d')
+
+        ctx.fillStyle = '#fff'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.strokeStyle = '#000'
+        ctx.lineCap = 'round'
+        ctx.lineWidth = 5
+    }
 
     // MouseDown
     const startDrawing = (e) => {
@@ -73,7 +84,8 @@ export const CanvasCmp = () => {
 
 
     const clear = () => {
-
+        console.log('clear');
+        socketService.emit('clear')
     }
 
     return (

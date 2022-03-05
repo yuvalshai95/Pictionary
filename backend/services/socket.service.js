@@ -25,6 +25,7 @@ function connectSockets(http) {
 
     socket.on('join', userName => onPlayerJoin(socket, userName));
     socket.on('draw', coords => onDraw(socket, coords));
+    socket.on('clear', () => onClearCanvas());
   });
 }
 
@@ -53,6 +54,11 @@ const onPlayerJoin = (socket, userName) => {
 const onDraw = (socket, coords) => {
   socket.broadcast.emit('draw', coords);
   drawingCache.push(coords);
+};
+
+const onClearCanvas = () => {
+  drawingCache = [];
+  gIo.emit('clear');
 };
 
 // GAME MANAGEMENT FUNCTIONS //
