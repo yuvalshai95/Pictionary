@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { socketService } from '../services/socket.service'
 
-export const CanvasCmp = ({ isDrawer, onNextTurn }) => {
+export const CanvasCmp = ({ isDrawer }) => {
     const canvasRef = useRef()
     const [isDrawing, setIsDrawing] = useState(false)
     const [coords, setCoords] = useState({ x: 0, y: 0 })
@@ -109,11 +109,6 @@ export const CanvasCmp = ({ isDrawer, onNextTurn }) => {
                 onMouseOut={stopDrawing}
             />
             <button onClick={clear}>Clear</button>
-
-            {/* FOR TESTING ONLY */}
-            {isDrawer && (
-                <button onClick={onNextTurn} >Next turn</button>
-            )}
         </>
     )
 }

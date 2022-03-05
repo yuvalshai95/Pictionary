@@ -62,6 +62,7 @@ const onPlayerJoin = (socket, userName) => {
     if (players.length < 2) {
       gIo.emit('endGame');
       isGameStarted = false;
+      currDrawerIndex = 0;
     }
 
     gIo.emit('player', players);
