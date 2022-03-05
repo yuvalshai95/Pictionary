@@ -18,11 +18,13 @@ export const CanvasCmp = () => {
     }, [])
 
 
-    // Live draw socket
+    // Multiplayer draw in real time socket
     useEffect(() => {
+        socketService.off('draw')
         socketService.on('draw', ({ xStart, yStart, xFinish, yFinish }) => {
             drawLine(xStart, yStart, xFinish, yFinish, false)
         })
+
     }, [])
 
     // MouseDown

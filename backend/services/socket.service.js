@@ -37,13 +37,17 @@ const onPlayerJoin = (socket, userName) => {
     score: 0,
   });
 
-  // gIo.emit('chat', {
-  //   from: 'Host',
-  //   msg: `${userName} joined`,
-  //   color: 'green',
-  // });
+  // Update client player list when a player join
+  gIo.emit('player', players);
 
-  // if(canStartGame()) startGame()
+  // Update client player list when a player leave
+  socket.on('disconnect', () => {
+    players = players.filter(player => {
+      return player.id !== socket.id;
+    });
+
+    gIo.emit('player', players);
+  });
 };
 
 const onDraw = (socket, coords) => {

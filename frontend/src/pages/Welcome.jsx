@@ -12,7 +12,6 @@ export const Welcome = () => {
       console.log('empty name');
       return
     } else {
-      console.log('submit name');
       socketService.emit('join', name)
       // redirect to choose word
       navigate('/drawing')
