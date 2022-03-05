@@ -10,6 +10,7 @@ export const PlayerList = () => {
         // Player join/leave socket to update player list 
         socketService.off('player')
         socketService.on('player', (newPlayers) => {
+            console.log('new Players ->', newPlayers)
             setPlayers(newPlayers)
         })
     }, [])

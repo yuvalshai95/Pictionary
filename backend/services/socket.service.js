@@ -26,6 +26,7 @@ function connectSockets(http) {
     socket.on('join', userName => onPlayerJoin(socket, userName));
     socket.on('draw', coords => onDraw(socket, coords));
     socket.on('clear', () => onClearCanvas());
+    socket.on('chat', msg => onReceiveChat(socket, msg));
   });
 }
 
@@ -61,6 +62,19 @@ const onClearCanvas = () => {
   gIo.emit('clear');
 };
 
+const onReceiveChat = (socket, msg) => {
+  const from = players.find(player => player.id === socket.id).userName;
+  socket.broadcast.emit('chat', {
+    from,
+    msg,
+  });
+
+  // Send to all
+  // gIo.emit('chat', {
+  //   from,
+  //   msg,
+  // });
+};
 // GAME MANAGEMENT FUNCTIONS //
 
 // const canStartGame = () => {
