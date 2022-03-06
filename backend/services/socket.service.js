@@ -15,7 +15,7 @@ let timer;
 let counter;
 
 const TURN_TIME = 60;
-const MAX_ROUNDS = 3;
+const MAX_ROUNDS = 4;
 
 function connectSockets(http) {
   gIo = require('socket.io')(http, {
@@ -115,7 +115,7 @@ const onReceiveChat = (socket, msg) => {
     // Send in chat player guessed
     gIo.emit('chat', {
       from: 'Host',
-      msg: `${player.userName} guessed the word!`,
+      msg: `${player.userName} guessed the correct word! (${word})`,
       color: 'gold',
     });
 
@@ -251,7 +251,7 @@ const startTimer = () => {
       // Send to all players the right word
       gIo.emit('chat', {
         from: 'Host',
-        msg: `The word was ${word}`,
+        msg: `The correct answer was ${word}`,
         color: 'brown',
       });
 

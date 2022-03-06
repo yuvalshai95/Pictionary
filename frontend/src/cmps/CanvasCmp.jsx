@@ -108,7 +108,7 @@ export const CanvasCmp = ({ isDrawer }) => {
                 onMouseUp={stopDrawing}
                 onMouseOut={stopDrawing}
             />
-            <button onClick={clear}>Clear</button>
+            {isDrawer && <button onClick={clear}>Clear</button>}
         </>
     )
 }

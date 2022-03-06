@@ -53,7 +53,7 @@ export const Chat = ({ isDrawer }) => {
                 ))}
                 <div ref={bottomRef}></div>
             </ul>
-            <form className="flex" onSubmit={handleSubmit}>
+            {!isDrawer && <form className="flex" onSubmit={handleSubmit}>
                 <input
                     type="text"
                     disabled={false}
@@ -68,7 +68,7 @@ export const Chat = ({ isDrawer }) => {
                 >
                     Guess
                 </button>
-            </form>
+            </form>}
         </div>
     )
 }
