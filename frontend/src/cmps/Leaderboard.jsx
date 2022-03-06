@@ -1,4 +1,5 @@
-import React from 'react'
+// Cmps
+import { LeaderboardPreview } from '../cmps/LeaderboardPreview'
 
 export const Leaderboard = ({ id, leaderboardPlayers }) => {
     return (
@@ -7,17 +8,16 @@ export const Leaderboard = ({ id, leaderboardPlayers }) => {
                 <div className="title">
                     <h1>Leaderboard</h1>
                 </div>
-                <div className="body leaderboard-players">
-                    <ul className="clean-list flex column">
+                <div className="body">
+                    <ul className="leaderboard-list clean-list flex column">
                         {
-                            leaderboardPlayers.map(player => (
-                                <li className="flex justify-space-between" key={player.id}>
-                                    {
-                                        id === player.id ? <b>{player.userName}(You)</b>
-                                            : <span>{player.userName}</span>
-                                    }
-                                    <span>{player.score}</span>
-                                </li>
+                            leaderboardPlayers.map((player, index) => (
+                                <LeaderboardPreview
+                                    key={player.id}
+                                    index={index + 1}
+                                    userName={player.userName}
+                                    score={player.score}
+                                />
                             ))
                         }
                     </ul>
