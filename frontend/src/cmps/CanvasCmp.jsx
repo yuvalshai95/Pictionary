@@ -14,7 +14,7 @@ export const CanvasCmp = ({ isDrawer }) => {
     useEffect(() => {
         // Canvas drawing history for players joining after game started
         socketService.off('join')
-        socketService.on('join', (drawingCache) => {
+        socketService.on('join', ({ drawingCache }) => {
             drawingCache.forEach(line => drawLine(line.xStart, line.yStart, line.xFinish, line.yFinish, false));
         })
 

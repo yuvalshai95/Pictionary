@@ -20,6 +20,7 @@ export const Drawing = () => {
   const [isGuessedWord, setIsGuessedWord] = useState(false)
 
   useEffect(() => {
+    socketService.on('join', handleJoin)
     socketService.on('startGame', handleTurn)
     socketService.on('nextTurn', handleTurn)
     socketService.on('tick', setTimer)
@@ -38,6 +39,10 @@ export const Drawing = () => {
     //   setIsGameRunning(false)
     // })
   }, [])
+
+  const handleJoin = ({ word }) => {
+    setWord(word)
+  }
 
   const handleTurn = ({ id, word }) => {
     id === socketService.getSocketId() ?

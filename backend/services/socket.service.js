@@ -53,29 +53,14 @@ const onPlayerJoin = (socket, userName) => {
     color: 'green',
   });
 
+  // Game starting condition
   if (canStartGame()) startGame();
 
-  // Game starting condition
-  // if (!isGameStarted && players.length > 1) {
-  //   // gIo.emit('startGame');
-  //   gIo.emit('nextTurn', players[currDrawerIndex]);
-  //   isGameStarted = true;
-  // }
-
-  // Send to client the cached drawing
-  socket.emit('join', drawingCache);
+  // Send to client the cached drawing & word
+  socket.emit('join', {drawingCache, word});
 
   // Update client player list when a player join
   gIo.emit('player', players);
-
-  // Drawer timer run out or game word guess is right
-  // socket.on('nextTurn', () => {
-  //   currDrawerIndex++;
-
-  //   if (currDrawerIndex > players.length - 1) currDrawerIndex = 0;
-
-  //   gIo.emit('nextTurn', players[currDrawerIndex]);
-  // });
 };
 
 // Update client player list when a player leave
@@ -175,30 +160,16 @@ const startGame = () => {
   // Send to all players who is drawing
   gIo.emit('chat', {
     from: 'Host',
-    msg: `${player.userName} is now drawing`,
+    msg: `${player?.userName} is now drawing`,
     color: 'blue',
   });
 
   startTimer();
-
-  // clearCanvas()
-  // nextRound()
-
-  // const player = players[currDrawerIndex]
-  // word = getRandomWord()
-
-  // io.emit('player', players)
-  // io.emit('startGame', {
-  // 	id: player.id,
-  // 	word
-  // })
-  // emitDrawer(player.username)
-
-  // startTimer()
 };
 
 const endGame = () => {
   isGameStarted = false;
+  word = '';
   clearInterval(timer);
   onClearCanvas();
   gIo.emit('endGame');
@@ -206,11 +177,8 @@ const endGame = () => {
 
 const nextTurn = () => {
   clearInterval(timer);
-
   currDrawerIndex++;
-
   if (currDrawerIndex > players.length - 1) currDrawerIndex = 0;
-
   onClearCanvas();
 
   // set which player is the drawer
@@ -227,7 +195,7 @@ const nextTurn = () => {
   // Send to all players who is drawing
   gIo.emit('chat', {
     from: 'Host',
-    msg: `${player.userName} is now drawing`,
+    msg: `${player?.userName} is now drawing`,
     color: 'blue',
   });
 
@@ -247,6 +215,13 @@ const startTimer = () => {
 
     // Player is out of time switch drawing turns
     if (counter < 0) {
+      // Send to all players the right word
+      gIo.emit('chat', {
+        from: 'Host',
+        msg: `The word was ${word}`,
+        color: 'brown',
+      });
+
       nextTurn();
       return;
     }
