@@ -63,7 +63,6 @@ const onPlayerJoin = (socket, userName) => {
   gIo.emit('player', players);
 };
 
-// Update client player list when a player leave
 const onPlayerLeave = socket => {
   // Get player that left
   const player = players.find(p => p.id === socket.id);
@@ -108,6 +107,10 @@ const onReceiveChat = (socket, msg) => {
 
   // Check if player guessed right
   if (isGameStarted && msg === word) {
+    // Add score and update players
+    addScore(socket.id, 50);
+    gIo.emit('player', players);
+
     // Send in chat player guessed
     gIo.emit('chat', {
       from: 'Host',
@@ -168,16 +171,23 @@ const startGame = () => {
 };
 
 const endGame = () => {
+  clearInterval(timer);
   isGameStarted = false;
   word = '';
-  clearInterval(timer);
   onClearCanvas();
+
+  // Reset all scores
+  players = players.map(p => ({
+    ...p,
+    score: 0,
+  }));
+
   gIo.emit('endGame');
 };
 
 const nextTurn = () => {
   clearInterval(timer);
-  currDrawerIndex++;
+  currDrawerIndex++; // by order of joining the room
   if (currDrawerIndex > players.length - 1) currDrawerIndex = 0;
   onClearCanvas();
 
@@ -187,6 +197,7 @@ const nextTurn = () => {
   // set word to draw
   word = getRandomWord();
 
+  // Update client to start next turn
   gIo.emit('nextTurn', {
     id: player?.id,
     word,
@@ -233,6 +244,12 @@ const startTimer = () => {
 
 const getRandomWord = () => {
   return wordlist({exactly: 1})[0];
+};
+
+const addScore = (id, amount) => {
+  players.forEach(player => {
+    if (player.id === id) player.score += amount;
+  });
 };
 
 module.exports = {
