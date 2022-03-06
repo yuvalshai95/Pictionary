@@ -107,7 +107,7 @@ const onReceiveChat = (socket, msg) => {
   const player = players.find(player => player.id === socket.id);
 
   // Check if player guessed right
-  if (isGameStarted && msg === word) {
+  if (isGameStarted && msg.toLowerCase() === word.toLowerCase()) {
     // Add score and update players
     addScore(socket.id, 50);
     gIo.emit('player', players);
@@ -123,11 +123,13 @@ const onReceiveChat = (socket, msg) => {
     socket.emit('correctGuess');
     playersGuessed.push(player.id);
 
-    nextTurn();
+    // Support more then 1 players guessing
+    if (playersGuessed.length >= players.length - 1) {
+      nextTurn();
+    }
 
-    // if (playersGuessed.length >= players.length - 1) {
-    //   nextTurn();
-    // }
+    // Only 1 player guessing
+    // nextTurn();
 
     return;
   }
