@@ -5,9 +5,9 @@ export const GameHeader = ({ seconds, isDrawer, word, isGuessedWord }) => {
         <div className="game-header flex justify-around">
             <TimerDisplay seconds={seconds} />
             {
-                !word ? <h5>Waiting for other players</h5>
+                !word ? <h5>Waiting for other players...</h5>
                     : (
-                        isDrawer ? <h5>You to draw is {word}</h5>
+                        isDrawer ? <h5>Your word to draw is <b>{word}</b> </h5>
                             : <h5>
                                 {
                                     isGuessedWord ? `You have guessed the word!`

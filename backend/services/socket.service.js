@@ -171,6 +171,14 @@ const startGame = () => {
     id: player.id,
     word,
   });
+
+  // Send to all players who is drawing
+  gIo.emit('chat', {
+    from: 'Host',
+    msg: `${player.userName} is now drawing`,
+    color: 'blue',
+  });
+
   startTimer();
 
   // clearCanvas()
@@ -214,6 +222,13 @@ const nextTurn = () => {
   gIo.emit('nextTurn', {
     id: player?.id,
     word,
+  });
+
+  // Send to all players who is drawing
+  gIo.emit('chat', {
+    from: 'Host',
+    msg: `${player.userName} is now drawing`,
+    color: 'blue',
   });
 
   startTimer();
