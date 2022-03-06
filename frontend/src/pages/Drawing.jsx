@@ -5,42 +5,35 @@ import { PlayerList } from '../cmps/PlayerList'
 import { CanvasCmp } from '../cmps/CanvasCmp';
 import { Chat } from '../cmps/Chat';
 import { GameHeader } from '../cmps/GameHeader';
+import { Leaderboard } from '../cmps/Leaderboard'
 
 
 // Services
 import { socketService } from '../services/socket.service';
 
 export const Drawing = () => {
-  // const { seconds, start: startTimer } = useTimer({
-  //   onEnd: () => nextTurn()
-  // })
   const [isDrawer, setIsDrawer] = useState(false)
+  const [isLeaderBoardShown, setIsLeaderBoardShown] = useState(false)
+  const [isGuessedWord, setIsGuessedWord] = useState(false)
+  const [leaderboard, setLeaderboard] = useState([])
   const [word, setWord] = useState('')
   const [timer, setTimer] = useState(0)
-  const [isGuessedWord, setIsGuessedWord] = useState(false)
+  const [round, setRound] = useState(0)
 
   useEffect(() => {
     socketService.on('join', handleJoin)
     socketService.on('startGame', handleTurn)
+    socketService.on('nextRound', handleNextRound)
     socketService.on('nextTurn', handleTurn)
     socketService.on('tick', setTimer)
-    socketService.on('endGame', handleEndGame)
     socketService.on('correctGuess', handleCorrectGuess)
-    // For now enable drawing if there are more than one
-    // socketService.on('startGame', () => setIsDrawer(true))
-    // socketService.on('nextTurn', (drawer) => {
-    //   drawer.id === socketService.getSocketId() ? setIsDrawer(true) : setIsDrawer(false)
-    //   startTimer(10)
-    //   setDrawerName(drawer.userName)
-    //   setIsGameRunning(true)
-    // })
-    // socketService.on('endGame', () => {
-    //   setIsDrawer(false)
-    //   setIsGameRunning(false)
-    // })
+    socketService.on('resetGame', handleResetGame)
+    socketService.on('leaderboard', handleLeaderboard)
+
   }, [])
 
-  const handleJoin = ({ word }) => {
+  const handleJoin = ({ word, round }) => {
+    setRound(round)
     setWord(word)
   }
 
@@ -48,15 +41,26 @@ export const Drawing = () => {
     id === socketService.getSocketId() ?
       setIsDrawer(true) : setIsDrawer(false)
 
-    setWord(word)
     setIsGuessedWord(false)
+    setIsLeaderBoardShown(false)
+    setWord(word)
   }
 
-  const handleEndGame = () => {
-    setIsDrawer(false)
-    setWord('')
-    setTimer(0)
+  const handleResetGame = () => {
     setIsGuessedWord(false)
+    setIsDrawer(false)
+    setTimer(0)
+    setRound(0)
+    setWord('')
+  }
+
+  const handleLeaderboard = (leaderboard) => {
+    setLeaderboard(leaderboard)
+    setIsLeaderBoardShown(true)
+  }
+
+  const handleNextRound = () => {
+    setRound((prevRound) => ++prevRound)
   }
 
   const handleCorrectGuess = () => {
@@ -67,10 +71,15 @@ export const Drawing = () => {
     <section className="drawing">
       <h1>Drawing page</h1>
       <h1>Drawing page</h1>
+      {isLeaderBoardShown && <Leaderboard
+        id={socketService.getSocketId()}
+        leaderboardPlayers={leaderboard}
+      />}
       <GameHeader
         seconds={timer}
         isDrawer={isDrawer}
         word={word}
+        round={round}
         isGuessedWord={isGuessedWord}
       />
       <CanvasCmp isDrawer={isDrawer} />

@@ -1,6 +1,6 @@
 import { TimerDisplay } from "./TimerDisplay"
 
-export const GameHeader = ({ seconds, isDrawer, word, isGuessedWord }) => {
+export const GameHeader = ({ seconds, isDrawer, word, isGuessedWord, round }) => {
     return (
         <div className="game-header flex justify-around">
             <TimerDisplay seconds={seconds} />
@@ -17,7 +17,7 @@ export const GameHeader = ({ seconds, isDrawer, word, isGuessedWord }) => {
                             </h5>
                     )
             }
-            <h5>Round: 1/3</h5>
+            <h5>Round: {round}/3</h5>
         </div>
     )
 }

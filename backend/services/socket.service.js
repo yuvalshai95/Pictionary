@@ -15,6 +15,7 @@ let timer;
 let counter;
 
 const TURN_TIME = 60;
+const MAX_ROUNDS = 3;
 
 function connectSockets(http) {
   gIo = require('socket.io')(http, {
@@ -30,10 +31,10 @@ function connectSockets(http) {
     });
 
     socket.on('join', userName => onPlayerJoin(socket, userName));
+    socket.on('disconnect', () => onPlayerLeave(socket));
+    socket.on('chat', msg => onReceiveChat(socket, msg));
     socket.on('draw', coords => onDraw(socket, coords));
     socket.on('clear', () => onClearCanvas());
-    socket.on('chat', msg => onReceiveChat(socket, msg));
-    socket.on('disconnect', () => onPlayerLeave(socket));
   });
 }
 
@@ -56,8 +57,8 @@ const onPlayerJoin = (socket, userName) => {
   // Game starting condition
   if (canStartGame()) startGame();
 
-  // Send to client the cached drawing & word
-  socket.emit('join', {drawingCache, word});
+  // Send to client the cached drawing,word,round
+  socket.emit('join', {drawingCache, word, round});
 
   // Update client player list when a player join
   gIo.emit('player', players);
@@ -74,14 +75,14 @@ const onPlayerLeave = socket => {
     color: 'red',
   });
 
-  currDrawerIndex--;
-
   // Remove player for players
   players = players.filter(player => {
     return player.id !== socket.id;
   });
 
-  players.length === 0 || shouldEndGame() ? endGame() : nextTurn();
+  currDrawerIndex--;
+
+  shouldGameReset() ? resetGame() : nextTurn();
 
   // Update client with current players in the game
   gIo.emit('player', players);
@@ -148,6 +149,7 @@ const startGame = () => {
   currDrawerIndex = 0; // first player in the room
 
   onClearCanvas();
+  nextRound();
 
   // set which player is the drawer
   const player = players[currDrawerIndex];
@@ -155,6 +157,7 @@ const startGame = () => {
   // set word to draw
   word = getRandomWord();
 
+  gIo.emit('player', players);
   gIo.emit('startGame', {
     id: player.id,
     word,
@@ -170,25 +173,44 @@ const startGame = () => {
   startTimer();
 };
 
-const endGame = () => {
-  clearInterval(timer);
-  isGameStarted = false;
-  word = '';
-  onClearCanvas();
+// Got through all rounds
+const finishGame = () => {
+  const leaderboardPlayers = [...players].sort((p1, p2) => (p1.score < p2.score ? 1 : -1));
+  gIo.emit('leaderboard', leaderboardPlayers);
 
-  // Reset all scores
-  players = players.map(p => ({
-    ...p,
+  resetGame();
+
+  setTimeout(() => {
+    canStartGame() && startGame();
+  }, 15 * 1000); // 15 seconds
+};
+
+// When not enough players
+const resetGame = () => {
+  clearInterval(timer);
+
+  // Reset scores
+  players = players.map(player => ({
+    ...player,
     score: 0,
   }));
 
-  gIo.emit('endGame');
+  isGameStarted = false;
+  word = '';
+  round = 0;
+
+  onClearCanvas();
+  gIo.emit('resetGame');
 };
 
 const nextTurn = () => {
+  if (!nextRound()) return;
+
   clearInterval(timer);
   currDrawerIndex++; // by order of joining the room
-  if (currDrawerIndex > players.length - 1) currDrawerIndex = 0;
+  if (currDrawerIndex > players.length - 1) {
+    currDrawerIndex = 0;
+  }
   onClearCanvas();
 
   // set which player is the drawer
@@ -213,8 +235,8 @@ const nextTurn = () => {
   startTimer();
 };
 
-const shouldEndGame = () => {
-  return players.length < 2 && isGameStarted;
+const shouldGameReset = () => {
+  return players.length < 2;
 };
 
 const startTimer = () => {
@@ -238,6 +260,18 @@ const startTimer = () => {
     }
     gIo.emit('tick', counter);
   }, 1000);
+};
+
+const nextRound = () => {
+  // Finished all round
+  // round++;
+  if (++round > MAX_ROUNDS) {
+    finishGame();
+    return false;
+  }
+
+  gIo.emit('nextRound');
+  return true;
 };
 
 // Gameplay LOGIC //
