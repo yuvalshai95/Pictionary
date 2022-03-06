@@ -15,15 +15,22 @@ export const Drawing = () => {
     onEnd: () => nextTurn()
   })
   const [isDrawer, setIsDrawer] = useState(false)
+  const [drawerName, setDrawerName] = useState('')
+  const [isGameRunning, setIsGameRunning] = useState(false)
 
   useEffect(() => {
     // For now enable drawing if there are more than one
     // socketService.on('startGame', () => setIsDrawer(true))
-    socketService.on('nextTurn', (id) => {
-      id === socketService.getSocketId() ? setIsDrawer(true) : setIsDrawer(false)
+    socketService.on('nextTurn', (drawer) => {
+      drawer.id === socketService.getSocketId() ? setIsDrawer(true) : setIsDrawer(false)
       startTimer(10)
+      setDrawerName(drawer.userName)
+      setIsGameRunning(true)
     })
-    socketService.on('endGame', () => setIsDrawer(false))
+    socketService.on('endGame', () => {
+      setIsDrawer(false)
+      setIsGameRunning(false)
+    })
   }, [])
 
   const nextTurn = () => {
@@ -34,7 +41,12 @@ export const Drawing = () => {
     <section className="drawing">
       <h1>Drawing page</h1>
       <h1>Drawing page</h1>
-      <GameHeader seconds={seconds} />
+      <GameHeader
+        seconds={seconds}
+        isGameRunning={isGameRunning}
+        drawerName={drawerName}
+        isDrawer={isDrawer}
+      />
       <CanvasCmp isDrawer={isDrawer} />
       <div>
         <h1>Players List</h1>

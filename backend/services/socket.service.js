@@ -42,7 +42,7 @@ const onPlayerJoin = (socket, userName) => {
   // Game starting condition
   if (!isGameStarted && players.length > 1) {
     // gIo.emit('startGame');
-    gIo.emit('nextTurn', players[currDrawerIndex].id);
+    gIo.emit('nextTurn', players[currDrawerIndex]);
     isGameStarted = true;
   }
 
@@ -79,7 +79,7 @@ const onPlayerJoin = (socket, userName) => {
 
     if (currDrawerIndex > players.length - 1) currDrawerIndex = 0;
 
-    gIo.emit('nextTurn', players[currDrawerIndex].id);
+    gIo.emit('nextTurn', players[currDrawerIndex]);
   });
 };
 
