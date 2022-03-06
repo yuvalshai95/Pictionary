@@ -2,7 +2,7 @@
     position: fixed;
     bottom: 5px;
     left: 5px;
-    width: 350px;
+    width: 300px;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     display: flex;
     flex-direction: column;
@@ -14,7 +14,7 @@
     border-radius: 3px;
     color: white;
     .close-btn {
-        color: var(--text-color);
+        color: white;
         background-color: inherit;
         border: none;
         padding: 3px;
@@ -34,7 +34,6 @@
     p {
         text-align: left;
     }
-    &.info {}
     &.warning {
         background-color: rgb(189, 89, 89);
     }
