@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 // Services
 import { socketService } from '../services/socket.service.js'
 
-export const Chat = () => {
+export const Chat = ({ isDrawer }) => {
     const bottomRef = useRef()
     const [msg, setMsg] = useState('')
     const [chats, setChats] = useState([])
@@ -61,7 +61,13 @@ export const Chat = () => {
                     onChange={(e) => { setMsg(e.target.value) }}
                     placeholder="Guess the answer here..."
                 />
-                <button type="submit" onClick={handleSubmit}>Send</button>
+                <button
+                    type="submit"
+                    onClick={handleSubmit}
+                    disabled={isDrawer}
+                >
+                    Guess
+                </button>
             </form>
         </div>
     )

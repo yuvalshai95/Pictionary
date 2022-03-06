@@ -17,13 +17,14 @@ export const Drawing = () => {
   const [isDrawer, setIsDrawer] = useState(false)
   const [word, setWord] = useState('')
   const [timer, setTimer] = useState(0)
-  // const [isGameRunning, setIsGameRunning] = useState(false)
+  const [isGuessedWord, setIsGuessedWord] = useState(false)
 
   useEffect(() => {
     socketService.on('startGame', handleTurn)
     socketService.on('nextTurn', handleTurn)
     socketService.on('tick', setTimer)
     socketService.on('endGame', handleEndGame)
+    socketService.on('correctGuess', handleCorrectGuess)
     // For now enable drawing if there are more than one
     // socketService.on('startGame', () => setIsDrawer(true))
     // socketService.on('nextTurn', (drawer) => {
@@ -41,13 +42,20 @@ export const Drawing = () => {
   const handleTurn = ({ id, word }) => {
     id === socketService.getSocketId() ?
       setIsDrawer(true) : setIsDrawer(false)
+
     setWord(word)
+    setIsGuessedWord(false)
   }
 
   const handleEndGame = () => {
     setIsDrawer(false)
     setWord('')
     setTimer(0)
+    setIsGuessedWord(false)
+  }
+
+  const handleCorrectGuess = () => {
+    setIsGuessedWord(true)
   }
 
   return (
@@ -58,6 +66,7 @@ export const Drawing = () => {
         seconds={timer}
         isDrawer={isDrawer}
         word={word}
+        isGuessedWord={isGuessedWord}
       />
       <CanvasCmp isDrawer={isDrawer} />
       <div>
@@ -65,7 +74,7 @@ export const Drawing = () => {
         <PlayerList />
       </div>
       <div>
-        <Chat />
+        <Chat isDrawer={isDrawer} />
       </div>
     </section>
   );

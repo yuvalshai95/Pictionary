@@ -14,7 +14,8 @@ let word = '';
 let timer;
 let counter;
 
-const TURN_TIME = 10;
+const TURN_TIME = 60;
+
 function connectSockets(http) {
   gIo = require('socket.io')(http, {
     cors: {
@@ -96,7 +97,7 @@ const onPlayerLeave = socket => {
     return player.id !== socket.id;
   });
 
-  shouldEndGame() ? endGame() : nextTurn();
+  players.length === 0 || shouldEndGame() ? endGame() : nextTurn();
 
   // Update client with current players in the game
   gIo.emit('player', players);
@@ -119,6 +120,29 @@ const onClearCanvas = () => {
 
 const onReceiveChat = (socket, msg) => {
   const player = players.find(player => player.id === socket.id);
+
+  // Check if player guessed right
+  if (isGameStarted && msg === word) {
+    // Send in chat player guessed
+    gIo.emit('chat', {
+      from: 'Host',
+      msg: `${player.userName} guessed the word!`,
+      color: 'gold',
+    });
+
+    // update client
+    socket.emit('correctGuess');
+    playersGuessed.push(player.id);
+
+    nextTurn();
+
+    // if (playersGuessed.length >= players.length - 1) {
+    //   nextTurn();
+    // }
+
+    return;
+  }
+
   gIo.emit('chat', {
     from: player.userName,
     msg,
@@ -133,14 +157,19 @@ const canStartGame = () => {
 
 const startGame = () => {
   isGameStarted = true;
-  currDrawerIndex = 0;
+  currDrawerIndex = 0; // first player in the room
 
   onClearCanvas();
 
+  // set which player is the drawer
   const player = players[currDrawerIndex];
+
+  // set word to draw
+  word = getRandomWord();
+
   gIo.emit('startGame', {
     id: player.id,
-    word: getRandomWord(),
+    word,
   });
   startTimer();
 
@@ -176,10 +205,15 @@ const nextTurn = () => {
 
   onClearCanvas();
 
+  // set which player is the drawer
   const player = players[currDrawerIndex];
+
+  // set word to draw
+  word = getRandomWord();
+
   gIo.emit('nextTurn', {
     id: player?.id,
-    word: getRandomWord(),
+    word,
   });
 
   startTimer();
