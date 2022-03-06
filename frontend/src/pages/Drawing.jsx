@@ -15,7 +15,7 @@ export const Drawing = () => {
   //   onEnd: () => nextTurn()
   // })
   const [isDrawer, setIsDrawer] = useState(false)
-  const [drawer, setDrawer] = useState(null)
+  const [word, setWord] = useState('')
   const [timer, setTimer] = useState(0)
   // const [isGameRunning, setIsGameRunning] = useState(false)
 
@@ -38,15 +38,15 @@ export const Drawing = () => {
     // })
   }, [])
 
-  const handleTurn = (drawer) => {
-    drawer.id === socketService.getSocketId() ?
+  const handleTurn = ({ id, word }) => {
+    id === socketService.getSocketId() ?
       setIsDrawer(true) : setIsDrawer(false)
-    setDrawer(drawer)
+    setWord(word)
   }
 
   const handleEndGame = () => {
     setIsDrawer(false)
-    setDrawer(null)
+    setWord('')
     setTimer(0)
   }
 
@@ -56,10 +56,8 @@ export const Drawing = () => {
       <h1>Drawing page</h1>
       <GameHeader
         seconds={timer}
-        // isGameRunning={isGameRunning}
-        // drawerName={drawerName}
         isDrawer={isDrawer}
-        drawer={drawer}
+        word={word}
       />
       <CanvasCmp isDrawer={isDrawer} />
       <div>

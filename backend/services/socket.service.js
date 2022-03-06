@@ -1,3 +1,5 @@
+var wordlist = require('random-words');
+
 // Socket global
 var gIo = null;
 
@@ -133,8 +135,13 @@ const startGame = () => {
   isGameStarted = true;
   currDrawerIndex = 0;
 
+  onClearCanvas();
+
   const player = players[currDrawerIndex];
-  gIo.emit('startGame', player);
+  gIo.emit('startGame', {
+    id: player.id,
+    word: getRandomWord(),
+  });
   startTimer();
 
   // clearCanvas()
@@ -156,6 +163,7 @@ const startGame = () => {
 const endGame = () => {
   isGameStarted = false;
   clearInterval(timer);
+  onClearCanvas();
   gIo.emit('endGame');
 };
 
@@ -166,8 +174,13 @@ const nextTurn = () => {
 
   if (currDrawerIndex > players.length - 1) currDrawerIndex = 0;
 
+  onClearCanvas();
+
   const player = players[currDrawerIndex];
-  gIo.emit('nextTurn', player);
+  gIo.emit('nextTurn', {
+    id: player?.id,
+    word: getRandomWord(),
+  });
 
   startTimer();
 };
@@ -178,15 +191,24 @@ const shouldEndGame = () => {
 
 const startTimer = () => {
   counter = TURN_TIME;
+  gIo.emit('tick', counter);
 
   timer = setInterval(() => {
     counter--;
 
     // Player is out of time switch drawing turns
-    if (counter < 0) nextTurn();
-
+    if (counter < 0) {
+      nextTurn();
+      return;
+    }
     gIo.emit('tick', counter);
   }, 1000);
+};
+
+// Gameplay LOGIC //
+
+const getRandomWord = () => {
+  return wordlist({exactly: 1})[0];
 };
 
 module.exports = {
