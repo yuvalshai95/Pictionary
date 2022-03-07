@@ -1,5 +1,7 @@
 # Pictionary - Draw and guess game
 
+React.js | Node.js | Express.js | Socket.io | Multiplayer Game
+
 Live link:
 
 ### Features
