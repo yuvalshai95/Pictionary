@@ -33,7 +33,6 @@ export const CanvasCmp = ({ isDrawer }) => {
 
         window.addEventListener('resize', () => {
             resizeCanvas()
-
         });
 
         resizeCanvas()
@@ -42,11 +41,8 @@ export const CanvasCmp = ({ isDrawer }) => {
 
 
     const resizeCanvas = () => {
-        console.log('here')
         canvasRef.current.width = canvasWrapperRef.current.offsetWidth
         canvasRef.current.height = canvasWrapperRef.current.offsetHeight
-        console.log('canvasRef.width', canvasRef.current.width)
-        console.log('canvasRef.height', canvasRef.current.height)
     }
 
     const initCanvas = () => {
@@ -69,11 +65,20 @@ export const CanvasCmp = ({ isDrawer }) => {
 
     const getRecentCoords = (e) => {
         const canvas = canvasRef.current
+        const touchEvents = ['touchstart', 'touchmove', 'touchend'];
 
-        return {
-            x: e.clientX - canvas.getBoundingClientRect().left,
-            y: e.clientY - canvas.getBoundingClientRect().top
+        if (touchEvents.includes(e.type)) {
+            return {
+                x: e.changedTouches[0].clientX - canvas.getBoundingClientRect().left,
+                y: e.changedTouches[0].clientY - canvas.getBoundingClientRect().top
+            }
+        } else {
+            return {
+                x: e.clientX - canvas.getBoundingClientRect().left,
+                y: e.clientY - canvas.getBoundingClientRect().top
+            }
         }
+
     }
 
     // MouseUp / MouseOut
@@ -89,7 +94,6 @@ export const CanvasCmp = ({ isDrawer }) => {
     // MouseMove
     const draw = (e) => {
         if (!isDrawing || !isDrawer) return
-
         const newCoords = getRecentCoords(e)
         drawLine(coords.x, coords.y, newCoords.x, newCoords.y, true)
         setCoords(newCoords)
@@ -124,6 +128,9 @@ export const CanvasCmp = ({ isDrawer }) => {
                 onMouseMove={draw}
                 onMouseUp={stopDrawing}
                 onMouseOut={stopDrawing}
+                onTouchStart={startDrawing}
+                onTouchMove={draw}
+                onTouchEnd={stopDrawing}
             />
             {isDrawer && <button className="secondary-btn" onClick={clear}>Clear</button>}
         </div>
