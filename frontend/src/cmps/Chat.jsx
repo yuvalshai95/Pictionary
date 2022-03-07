@@ -38,8 +38,7 @@ export const Chat = ({ isDrawer }) => {
 
 
     return (
-        <div className="chat">
-            <h1>Chat Box</h1>
+        <div className="chat flex column justify-space-between">
             <ul className="chat-list clean-list flex column">
                 {chats.map((msg, index) => (
                     <li key={index} className="chat-item">
@@ -53,7 +52,7 @@ export const Chat = ({ isDrawer }) => {
                 ))}
                 <div ref={bottomRef}></div>
             </ul>
-            {!isDrawer && <form className="flex" onSubmit={handleSubmit}>
+            {!isDrawer && <form className="flex justify-space-between align-center" onSubmit={handleSubmit}>
                 <input
                     type="text"
                     disabled={false}

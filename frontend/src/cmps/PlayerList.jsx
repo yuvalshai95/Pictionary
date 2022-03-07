@@ -19,12 +19,12 @@ export const PlayerList = () => {
         <div className="player-list">
             <ul className="clean-list flex column">
                 {players.map(player => (
-                    <li key={player.id}>
+                    <li className="player-list-preview flex justify-space-between" key={player.id}>
                         {socketService.getSocketId() === player.id ?
                             <b>{player.userName} (You)</b>
                             : <b>{player.userName}</b>}
 
-                        <span> score: {player.score}</span>
+                        <span>{player.score}</span>
                     </li>
                 ))}
             </ul>

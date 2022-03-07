@@ -18,7 +18,7 @@ export const GameHeader = ({ seconds, isDrawer, word, isGuessedWord, round }) =>
                     )
             }
             {
-                round ? <h5>Round: {round}/3</h5>
+                round ? <h5>Round: {round}/4</h5>
                     : <h5>Round: N/A </h5>
             }
         </div>

@@ -14,7 +14,7 @@ let word = '';
 let timer;
 let counter;
 
-const TURN_TIME = 60;
+const TURN_TIME = 90;
 const MAX_ROUNDS = 4;
 
 function connectSockets(http) {
@@ -115,7 +115,7 @@ const onReceiveChat = (socket, msg) => {
     // Send in chat player guessed
     gIo.emit('chat', {
       from: 'Host',
-      msg: `${player.userName} guessed the correct word! (${word})`,
+      msg: `${player.userName} guessed the correct word!`,
       color: 'gold',
     });
 
@@ -197,11 +197,16 @@ const resetGame = () => {
     score: 0,
   }));
 
+  // Reset globals
   isGameStarted = false;
   word = '';
   round = 0;
+  playersGuessed = [];
 
+  // Reset canvas
   onClearCanvas();
+
+  // Update client to reset game
   gIo.emit('resetGame');
 };
 
@@ -209,17 +214,16 @@ const nextTurn = () => {
   if (!nextRound()) return;
 
   clearInterval(timer);
+  // Reset guesses
+  playersGuessed = [];
+
   currDrawerIndex++; // by order of joining the room
   if (currDrawerIndex > players.length - 1) {
     currDrawerIndex = 0;
   }
   onClearCanvas();
-
-  // set which player is the drawer
-  const player = players[currDrawerIndex];
-
-  // set word to draw
-  word = getRandomWord();
+  const player = players[currDrawerIndex]; // set which player is the drawer
+  word = getRandomWord(); // set word to draw
 
   // Update client to start next turn
   gIo.emit('nextTurn', {
@@ -260,14 +264,16 @@ const startTimer = () => {
       nextTurn();
       return;
     }
+
+    // Update client
     gIo.emit('tick', counter);
   }, 1000);
 };
 
 const nextRound = () => {
   // Finished all round
-  // round++;
-  if (++round > MAX_ROUNDS) {
+  round++;
+  if (round > MAX_ROUNDS) {
     finishGame();
     return false;
   }

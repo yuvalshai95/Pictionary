@@ -69,9 +69,7 @@ export const Drawing = () => {
   }
 
   return (
-    <section className="drawing">
-      <h1>Drawing page</h1>
-      <h1>Drawing page</h1>
+    <section className="drawing flex column align-center">
       {isLeaderBoardShown && <Leaderboard
         id={socketService.getSocketId()}
         leaderboardPlayers={leaderboard}
@@ -83,12 +81,9 @@ export const Drawing = () => {
         round={round}
         isGuessedWord={isGuessedWord}
       />
-      <CanvasCmp isDrawer={isDrawer} />
-      <div>
-        <h1>Players List</h1>
+      <div className="drawing-body flex justify-center">
         <PlayerList />
-      </div>
-      <div>
+        <CanvasCmp isDrawer={isDrawer} />
         <Chat isDrawer={isDrawer} />
       </div>
     </section>

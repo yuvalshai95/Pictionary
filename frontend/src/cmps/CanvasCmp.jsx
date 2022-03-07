@@ -3,6 +3,7 @@ import { socketService } from '../services/socket.service'
 
 export const CanvasCmp = ({ isDrawer }) => {
     const canvasRef = useRef()
+    const canvasWrapperRef = useRef()
     const [isDrawing, setIsDrawing] = useState(false)
     const [coords, setCoords] = useState({ x: 0, y: 0 })
 
@@ -30,8 +31,23 @@ export const CanvasCmp = ({ isDrawer }) => {
             initCanvas()
         })
 
+        window.addEventListener('resize', () => {
+            resizeCanvas()
+
+        });
+
+        resizeCanvas()
+
     }, [])
 
+
+    const resizeCanvas = () => {
+        console.log('here')
+        canvasRef.current.width = canvasWrapperRef.current.offsetWidth
+        canvasRef.current.height = canvasWrapperRef.current.offsetHeight
+        console.log('canvasRef.width', canvasRef.current.width)
+        console.log('canvasRef.height', canvasRef.current.height)
+    }
 
     const initCanvas = () => {
         const canvas = canvasRef.current
@@ -39,6 +55,7 @@ export const CanvasCmp = ({ isDrawer }) => {
 
         ctx.fillStyle = '#fff'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
+
         ctx.strokeStyle = '#000'
         ctx.lineCap = 'round'
         ctx.lineWidth = 5
@@ -48,7 +65,6 @@ export const CanvasCmp = ({ isDrawer }) => {
     const startDrawing = (e) => {
         setIsDrawing(true)
         setCoords(getRecentCoords(e))
-        canvasRef.current.getContext('2d').beginPath()
     }
 
     const getRecentCoords = (e) => {
@@ -66,7 +82,6 @@ export const CanvasCmp = ({ isDrawer }) => {
         // Draw a single dot
         if (isDrawing && isDrawer) {
             drawLine(newCoords.x, newCoords.y, newCoords.x, newCoords.y, true)
-            canvasRef.current.getContext('2d').closePath()
         }
         setIsDrawing(false)
     }
@@ -82,6 +97,8 @@ export const CanvasCmp = ({ isDrawer }) => {
 
     const drawLine = (xStart, yStart, xFinish, yFinish, isEmit) => {
         const ctx = canvasRef.current.getContext('2d')
+
+        ctx.beginPath()
         ctx.moveTo(xStart, yStart) // Start
         ctx.lineTo(xFinish, yFinish) // Finish
         ctx.stroke()
@@ -93,11 +110,11 @@ export const CanvasCmp = ({ isDrawer }) => {
 
 
     const clear = () => {
-        isDrawer && socketService.emit('clear')
+        socketService.emit('clear')
     }
 
     return (
-        <>
+        <div ref={canvasWrapperRef} className="canvas-wrapper flex column align-center">
             <canvas
                 ref={canvasRef}
                 className={`rounded ${isDrawer ? 'canvas-enabled' : 'canvas-disabled'}`}
@@ -108,7 +125,7 @@ export const CanvasCmp = ({ isDrawer }) => {
                 onMouseUp={stopDrawing}
                 onMouseOut={stopDrawing}
             />
-            {isDrawer && <button onClick={clear}>Clear</button>}
-        </>
+            {isDrawer && <button className="secondary-btn" onClick={clear}>Clear</button>}
+        </div>
     )
 }
