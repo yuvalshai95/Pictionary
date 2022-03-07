@@ -1,5 +1,3 @@
-// import React from 'react'
-
 export const LeaderboardPreview = ({ index, userName, score }) => {
 
     const getIcon = (index) => {

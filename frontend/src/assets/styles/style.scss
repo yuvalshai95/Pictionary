@@ -1,8 +1,7 @@
 // Setup
 @import "setup/typography.scss";
-@import "setup/variables.scss";
 @import "setup/functions.scss";
-@import "setup/mixins.scss";
+
 
 // Basics
 @import "basics/helpers.scss";
@@ -13,7 +12,6 @@
 @import "pages/home-page.scss";
 
 // Components
-@import "cmps/app-header.scss";
 @import "cmps/user-msg.scss";
 @import "cmps/canvas.scss";
 @import "cmps/drawing.scss";

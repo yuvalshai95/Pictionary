@@ -22,13 +22,28 @@ export const Drawing = () => {
   const [round, setRound] = useState(0)
 
   useEffect(() => {
+    socketService.off('join')
     socketService.on('join', handleJoin)
+
+    socketService.off('startGame')
     socketService.on('startGame', handleTurn)
+
+    socketService.off('nextRound')
     socketService.on('nextRound', handleNextRound)
+
+    socketService.off('nextTurn')
     socketService.on('nextTurn', handleTurn)
+
+    socketService.off('tick')
     socketService.on('tick', setTimer)
+
+    socketService.off('correctGuess')
     socketService.on('correctGuess', handleCorrectGuess)
+
+    socketService.off('resetGame')
     socketService.on('resetGame', handleResetGame)
+
+    socketService.off('leaderboard')
     socketService.on('leaderboard', handleLeaderboard)
 
   }, [])

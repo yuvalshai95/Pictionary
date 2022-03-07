@@ -1,4 +1,3 @@
-import React from 'react'
 
 function getFormattedTime(t) {
     return t < 10 ? `0${t}` : t
