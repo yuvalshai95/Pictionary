@@ -1,6 +1,6 @@
 # Pictionary - Draw and guess game
 
-Live link:
+Live link: https://pictionary-yuval.herokuapp.com/
 
 ### Features
 
