@@ -14,7 +14,6 @@ export const CanvasCmp = ({ isDrawer }) => {
 
     useEffect(() => {
         // Canvas drawing history for players joining after game started
-        socketService.off('join')
         socketService.on('join', ({ drawingCache }) => {
             drawingCache.forEach(line => drawLine(line.xStart, line.yStart, line.xFinish, line.yFinish, false));
         })
@@ -38,7 +37,6 @@ export const CanvasCmp = ({ isDrawer }) => {
         resizeCanvas()
 
     }, [])
-
 
     const resizeCanvas = () => {
         canvasRef.current.width = canvasWrapperRef.current.offsetWidth

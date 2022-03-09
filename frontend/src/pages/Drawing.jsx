@@ -22,7 +22,7 @@ export const Drawing = () => {
   const [round, setRound] = useState(0)
 
   useEffect(() => {
-    socketService.off('join')
+
     socketService.on('join', handleJoin)
 
     socketService.off('startGame')
