@@ -85,7 +85,7 @@ const onPlayerLeave = socket => {
   shouldGameReset() ? resetGame() : nextTurn();
 
   // // Update client with current players in the game
-  // gIo.emit('player', players);
+  gIo.emit('player', players);
 
   // Clear cache when room is empty
   if (players.length === 0) {
